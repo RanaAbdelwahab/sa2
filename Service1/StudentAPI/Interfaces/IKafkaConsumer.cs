@@ -5,6 +5,7 @@ namespace StudentAPI.Interfaces
 {
     public interface IKafkaConsumer<TKey, TValue> : IDisposable
     {
-        void Consume(Action<TValue> handler);
+        public List<Course> Consume();
+        Course ConsumeById(int id);
     }
 }

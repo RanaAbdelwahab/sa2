@@ -5,50 +5,106 @@ using StudentAPI.Model;
 
 namespace StudentAPI.Implementations
 {
-    public class KafkaConsumer<TKey, TValue> : IKafkaConsumer<TKey, TValue>
+    public class KafkaConsumer : IHostedService, IDisposable
     {
-        private readonly IConsumer<TKey, TValue> consumer;
-        private readonly CancellationTokenSource cancellationTokenSource;
+        private readonly IConsumer<Ignore, string> _consumer;
+        private Task _consumeTask;
+        private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
+        private readonly IStudentService _studentService;
 
-        public KafkaConsumer()
+        public KafkaConsumer(IStudentService studentService)
         {
-            string topicName = "Course";
+            _studentService = studentService;
+            var bootstrapServers = "localhost:9092";
+            var groupId = "my-consumer-group";
+            var topic = "Course";
+
             var config = new ConsumerConfig
             {
-                GroupId = "my-consumer-group",
-                BootstrapServers = "localhost:9092",
-                AutoOffsetReset = AutoOffsetReset.Earliest,
+                BootstrapServers = bootstrapServers,
+                GroupId = groupId,
+                AutoOffsetReset = AutoOffsetReset.Earliest
             };
-            this.consumer = new ConsumerBuilder<TKey, TValue>(config).Build();
-            this.consumer.Subscribe(topicName);
-            this.cancellationTokenSource = new CancellationTokenSource();
+
+            _consumer = new ConsumerBuilder<Ignore, string>(config).Build();
+            _consumer.Subscribe(topic);
         }
 
-        public void Consume(Action<TValue> handler)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
+            _consumeTask = Task.Run(() => ConsumeAsync(_stoppingCts.Token));
+            return Task.CompletedTask;
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            _stoppingCts.Cancel();
+
             try
             {
-                while (!cancellationTokenSource.IsCancellationRequested)
-                {
-                    var consumeResult = consumer.Consume(cancellationTokenSource.Token);
-                    if (consumeResult.Value != null)
-                    {
-                        handler(consumeResult.Value);
-                    }
-                }
+                await _consumeTask;
             }
-            catch (OperationCanceledException)
+            catch (TaskCanceledException)
             {
-                // This exception is expected when the CancellationToken is canceled.
+                // This is expected
+            }
+            finally
+            {
+                _consumer.Close();
+                _consumer.Dispose();
             }
         }
 
         public void Dispose()
         {
-            consumer.Unsubscribe();
-            cancellationTokenSource.Cancel();
-            consumer.Close();
-            consumer.Dispose();
+            _stoppingCts.Cancel();
+            _consumer.Close();
+            _consumer.Dispose();
         }
+
+        private async Task ConsumeAsync(CancellationToken stoppingToken)
+        {
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                try
+                {
+                    var consumeResult = _consumer.Consume(stoppingToken);
+                    var course = JsonConvert.DeserializeObject<CourseDto>(consumeResult.Message.Value);
+                    Course newCourse = new Course
+                    {
+                        Id = (int)consumeResult.TopicPartitionOffset.Offset,
+                        Name = course.Name,
+                        Description = course.Description
+
+                    };
+                    Console.WriteLine($"Received message: {consumeResult.Message.Value}");
+
+                    if (course.Deleted == 1)
+                    {
+                        //var result = await _studentService.DeleteCourse();
+                        //Console.WriteLine($"Message Deleted: {result}");
+                    }
+                    else if (course.Updated == 1)
+                    {
+                        var result = await _studentService.UpdateCourse(newCourse);
+                        Console.WriteLine($"Message Updated: {result}");
+                    }
+                    else
+                    {
+                        var result = await _studentService.CreateCourse(newCourse);
+                        Console.WriteLine($"Message Added: {result}");
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error while consuming message from Kafka: {ex.Message}");
+                }
+            }
+        }
+
     }
 }

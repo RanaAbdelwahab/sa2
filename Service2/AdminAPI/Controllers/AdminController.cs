@@ -1,14 +1,8 @@
-﻿using AdminAPI.Implementations;
-using AdminAPI.Interfaces;
+﻿using AdminAPI.Interfaces;
 using AdminAPI.Models;
 using Confluent.Kafka;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using static Confluent.Kafka.ConfigPropertyNames;
 
 namespace AdminAPI.Controllers
 {
@@ -28,8 +22,7 @@ namespace AdminAPI.Controllers
         {
             try
             {
-               // var producer = new AdminService<string, string>();
-
+               
                 var key = Guid.NewGuid().ToString();
                 var value = JsonConvert.SerializeObject(payload);
 
@@ -48,6 +41,7 @@ namespace AdminAPI.Controllers
         {
             try
             {
+
                 await producer.DeleteCourseAsync(key);
                 return Ok();
             }

@@ -10,7 +10,7 @@ namespace StudentAPI.Implementation
         public StudentService(DBContext context) => (_context) = (context);
         public async Task<Course> CreateCourse(Course course)
         {
-
+            
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
             return course;

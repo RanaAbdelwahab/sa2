@@ -16,7 +16,7 @@ namespace AdminAPI.Implementations
             {
                 this.config = new ProducerConfig { BootstrapServers = "localhost:9092" };
                 this.producer = new ProducerBuilder<TKey, TValue>(config).Build();
-               this._config = new AdminClientConfig { BootstrapServers = "localhost:9092" };
+               //this._config = new AdminClientConfig { BootstrapServers = "localhost:9092" };
             
         }
 
