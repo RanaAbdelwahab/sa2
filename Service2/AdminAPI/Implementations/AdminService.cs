@@ -14,7 +14,7 @@ namespace AdminAPI.Implementations
 
             public AdminService()
             {
-                this.config = new ProducerConfig { BootstrapServers = "localhost:9092" };
+                this.config = new ProducerConfig { BootstrapServers = "kafka:29092" };
                 this.producer = new ProducerBuilder<TKey, TValue>(config).Build();
                //this._config = new AdminClientConfig { BootstrapServers = "localhost:9092" };
             

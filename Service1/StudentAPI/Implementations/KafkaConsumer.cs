@@ -15,7 +15,7 @@ namespace StudentAPI.Implementations
         public KafkaConsumer(IStudentService studentService)
         {
             _studentService = studentService;
-            var bootstrapServers = "localhost:9092";
+            var bootstrapServers = "kafka:29092";
             var groupId = "my-consumer-group";
             var topic = "Course";
 

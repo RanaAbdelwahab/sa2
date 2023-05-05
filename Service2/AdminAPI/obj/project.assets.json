@@ -598,26 +598,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\mE\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\Nour waled\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\mE\\Documents\\sa2-project\\Service2\\AdminAPI\\AdminAPI.csproj",
+      "projectUniqueName": "C:\\Level4\\Second_Term\\SA2\\sa2_v2\\sa2\\Service2\\AdminAPI\\AdminAPI.csproj",
       "projectName": "AdminAPI",
-      "projectPath": "C:\\Users\\mE\\Documents\\sa2-project\\Service2\\AdminAPI\\AdminAPI.csproj",
-      "packagesPath": "C:\\Users\\mE\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\mE\\Documents\\sa2-project\\Service2\\AdminAPI\\obj\\",
+      "projectPath": "C:\\Level4\\Second_Term\\SA2\\sa2_v2\\sa2\\Service2\\AdminAPI\\AdminAPI.csproj",
+      "packagesPath": "C:\\Users\\Nour waled\\.nuget\\packages\\",
+      "outputPath": "C:\\Level4\\Second_Term\\SA2\\sa2_v2\\sa2\\Service2\\AdminAPI\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\mE\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\Nour waled\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -679,7 +672,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.200-preview.22628.1\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.300-preview.23179.2\\RuntimeIdentifierGraph.json"
       }
     }
   }
