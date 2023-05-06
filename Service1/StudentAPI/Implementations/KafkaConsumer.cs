@@ -84,12 +84,12 @@ namespace StudentAPI.Implementations
                         var result = await _studentService.DeleteCourse(course.Id);
                         Console.WriteLine($"Message Deleted: {result}");
                     }
-                    else if (course.Updated == 1)
+                    if (course.Updated == 1)
                     {
-                        var result = await _studentService.UpdateCourse(newCourse);
+                        var result = await _studentService.UpdateCourse(course);
                         Console.WriteLine($"Message Updated: {result}");
                     }
-                    else
+                    if(course.Deleted == 0 && course.Updated ==0)
                     {
                         var result = await _studentService.CreateCourse(newCourse);
                         Console.WriteLine($"Message Added: {result}");

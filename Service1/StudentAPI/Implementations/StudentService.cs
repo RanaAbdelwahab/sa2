@@ -46,15 +46,14 @@ namespace StudentAPI.Implementation
             return student;
         }
 
-        public async Task<string> UpdateCourse(Course course)
+        public async Task<string> UpdateCourse(CourseDto course)
         {
-            
+            var newCourse = await _context.Courses.FindAsync(course.Id);
 
-            if (course != null)
+            if (newCourse != null)
             {
-
-                var UpdatedCourse = _context.Courses.Attach(course);
-                UpdatedCourse.State = EntityState.Modified;
+                newCourse.Name = course.Name;
+                newCourse.Description = course.Description;
                 await _context.SaveChangesAsync();
                 return "Updeted";
             }
