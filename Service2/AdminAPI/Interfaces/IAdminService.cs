@@ -6,7 +6,7 @@ namespace AdminAPI.Interfaces
     public interface IAdminService<TKey, TValue> : IDisposable
     {
         Task<string> ProduceAsync(string topicName, TKey key, TValue value);
-        Task DeleteCourseAsync(string key);
-        Task UpdateCourseAsync(string key, Course newValue);
+        Task<string> DeleteCourseAsync(string topicName, TKey key, TValue value);
+        Task<string> UpdateCourseAsync(string topicName, TKey key, TValue value);
     }
 }

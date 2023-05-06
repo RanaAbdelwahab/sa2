@@ -22,9 +22,16 @@ namespace AdminAPI.Controllers
         {
             try
             {
-               
+                CourseDto course = new CourseDto
+                {
+                    Name = payload.Name,
+                    Description = payload.Description,
+                    Deleted = 0,
+                    Updated = 0
+                };
+
                 var key = Guid.NewGuid().ToString();
-                var value = JsonConvert.SerializeObject(payload);
+                var value = JsonConvert.SerializeObject(course);
 
                 var p = await producer.ProduceAsync("Course", key, value);
 
@@ -41,9 +48,14 @@ namespace AdminAPI.Controllers
         {
             try
             {
-
-                await producer.DeleteCourseAsync(key);
-                return Ok();
+                CourseDto course = new CourseDto
+                {
+                    Id = int.Parse(key),
+                    Deleted = 1
+                };
+                var value = JsonConvert.SerializeObject(course);
+                var  p = await producer.DeleteCourseAsync("Course", key, value);
+                return Ok(p);
             }
             catch (Exception ex)
             {
@@ -57,8 +69,16 @@ namespace AdminAPI.Controllers
         {
             try
             {
-                await producer.UpdateCourseAsync(key, newValue);
-                return Ok();
+                CourseDto course = new CourseDto
+                {
+                    Id = int.Parse(key),
+                    Name = newValue.Name,
+                    Description = newValue.Description,
+                    Updated = 1
+                };
+                var value = JsonConvert.SerializeObject(course);
+                var p = await producer.UpdateCourseAsync("Course", key, value);
+                return Ok(p);
             }
             catch (Exception ex)
             {

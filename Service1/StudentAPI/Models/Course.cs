@@ -8,7 +8,7 @@ namespace StudentAPI.Model
     public partial class Course
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;

@@ -8,22 +8,30 @@ namespace StudentAPI.Implementation
     {
         private readonly DBContext _context;
         public StudentService(DBContext context) => (_context) = (context);
-        public async Task<Course> CreateCourse(Course course)
+        public async Task<string> CreateCourse(Course course)
         {
-            
-            _context.Courses.Add(course);
-            await _context.SaveChangesAsync();
-            return course;
+            if (course != null)
+            {
+                _context.Courses.Add(course);
+                await _context.SaveChangesAsync();
+                return "Added";
+            }
+            else 
+               return "Not Added";
         }
 
-        public async Task DeleteCourse(int id)
+        public async Task<string> DeleteCourse(int id)
         {
             var course = await _context.Courses.FindAsync(id);
+           
             if (course != null)
             {
                 _context.Courses.Remove(course);
                 await _context.SaveChangesAsync();
+                return "Deleted";
+                
             }
+            return "Not Found";
         }
 
         public async Task<List<Course>> GetAllCourses()
@@ -33,16 +41,24 @@ namespace StudentAPI.Implementation
 
         public async Task<Course> GetCourseById(int id)
         {
+
             var student = await _context.Courses.FindAsync(id);
             return student;
         }
 
-        public async Task<Course> UpdateCourse(Course course)
+        public async Task<string> UpdateCourse(Course course)
         {
-            var UpdatedCourse = _context.Courses.Attach(course);
-            UpdatedCourse.State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return course;
+            
+
+            if (course != null)
+            {
+
+                var UpdatedCourse = _context.Courses.Attach(course);
+                UpdatedCourse.State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return "Updeted";
+            }
+            return "Not Found";
 
         }
     }

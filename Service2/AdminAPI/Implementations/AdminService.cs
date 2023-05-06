@@ -3,6 +3,7 @@ using AdminAPI.Models;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AdminAPI.Implementations
 {
@@ -29,44 +30,37 @@ namespace AdminAPI.Implementations
                 };
 
                 var deliveryResult = await producer.ProduceAsync(topicName, message);
-                var result = $"Message sent (value: {JsonConvert.SerializeObject(value)}, partition: {deliveryResult.Partition}, offset: {deliveryResult.Offset})";
-                Console.WriteLine($"Message sent (value: {JsonConvert.SerializeObject(value)}, partition: {deliveryResult.Partition}, offset: {deliveryResult.Offset})");
+                var result = $"Course Added (value: {JsonConvert.SerializeObject(value)}, partition: {deliveryResult.Partition}, offset: {deliveryResult.Offset})";
+                Console.WriteLine(result);
                 return result;
             }
 
-        public async Task DeleteCourseAsync(string key)
+        public async Task<string> DeleteCourseAsync(string topicName, TKey key, TValue value)
         {
-            using (var adminClient = new AdminClientBuilder(_config).Build())
+            var message = new Message<TKey, TValue>
             {
-                var metadata = adminClient.GetMetadata("Course", TimeSpan.FromSeconds(5));
-                var partition = metadata.Topics.SelectMany(t => t.Partitions).FirstOrDefault(p => p.Leader != null && p.PartitionId == Convert.ToInt32(key) % metadata.Topics.Count);
+                Key = key,
+                Value = value
+            };
 
-                if (partition != null)
-                {
-                    var topicPartition = new TopicPartition("Course", new Partition(partition.PartitionId));
-                    var offset = new Offset(Convert.ToInt64(key));
-                    await adminClient.DeleteRecordsAsync(new[] { new TopicPartitionOffset(topicPartition, offset) });
-                }
-                else
-                {
-                    throw new Exception($"Partition not found for key {key}");
-                }
-            }
+            var deliveryResult = await producer.ProduceAsync(topicName, message);
+            var result = $"Course Deleted (value: {value}, partition: {deliveryResult.Partition}, offset: {deliveryResult.Offset})";
+            Console.WriteLine(result);
+            return result;
         }
 
-        public async Task UpdateCourseAsync(string key, Course updatedCourse)
+        public async Task<string> UpdateCourseAsync(string topicName, TKey key, TValue value)
         {
-            var updatedCourseJson = JsonConvert.SerializeObject(updatedCourse);
-            using (var producer = new ProducerBuilder<Null, string>(config).Build())
+            var message = new Message<TKey, TValue>
             {
-                var message = new Message<Null, string>
-                {
-                    Key = null,
-                    Value = updatedCourseJson,
-                    Timestamp = new Timestamp(DateTime.UtcNow)
-                };
-                await producer.ProduceAsync("Course", new Message<Null, string> { Key = null, Value = updatedCourseJson });
-            }
+                Key = key,
+                Value = value
+            };
+
+            var deliveryResult = await producer.ProduceAsync(topicName, message);
+            var result = $"Course Updated (value: {value}, partition: {deliveryResult.Partition}, offset: {deliveryResult.Offset})";
+            Console.WriteLine(result);
+            return result;
         }
         public void Dispose()
             {
